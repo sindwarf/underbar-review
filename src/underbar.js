@@ -188,11 +188,16 @@
     //call iterator on each item
       //set result as next accumulator
     //return accumulator
-
-    _.
-    if (accumulator === undefined) {
-      accumulator = collectio
-    }
+    var counter = 0;
+    _.each(collection, function(item, index, array) {
+      if (accumulator === undefined && counter === 0) {
+        accumulator = item;
+      } else {
+        accumulator = iterator(accumulator, item);
+      }
+      counter++;
+    });
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
