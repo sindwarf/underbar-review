@@ -183,10 +183,10 @@
     //edge cases: if no starting value the first element is used
 
     //if no accumulator
-      // accumulator = first value
-      // start iterator at second value
+    // accumulator = first value
+    // start iterator at second value
     //call iterator on each item
-      //set result as next accumulator
+    //set result as next accumulator
     //return accumulator
     var counter = 0;
     _.each(collection, function(item, index, array) {
@@ -216,12 +216,54 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    //input - any collection array or object
+    //output - boolean
+    //constraints - none
+    //edge cases - empty object, empty array
+
+    /*
+    iterate through each item in collection
+      if it's falsy return false
+
+    return true */
+    var isFalsy = true;
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+
+    _.each(collection, function(item) {
+
+      if (!iterator(item)) {
+        isFalsy = false;
+      }
+    });
+    return isFalsy;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    //input - collection array or object and iterator
+    //output - boolean
+    //constraints - must use every()
+
+    //using every
+    //if every case is falsy using iterator
+    //return false
+    //otherwise return true
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+    if (_.every(collection, function(item) {
+      return !iterator(item);
+    })) {
+      return false;
+    }
+    else {
+      return true;
+    }
+
   };
 
 
@@ -244,11 +286,45 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    //input- initial object and other additional object(s)
+    //output - modified initial object with new key:value pairs
+    //constraints - none
+    //edge - none
+
+    /* check length of arguments
+    iterate through each element of arguments array
+      look through each key:value pair and attach it to initial object*/
+    if (arguments.length === 1) {
+      return obj;
+    }
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        obj[key] = arguments[i][key];
+      }
+    }
+    return obj;
+
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    /*check lenth of arguments
+    iterate through each element of arguments array
+      look through each key: value pair
+      if key not found in original object, then attach key: value
+      */
+    if (arguments.length === 1) {
+      return obj;
+    }
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (obj[key] === undefined) {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+    return obj;
   };
 
 
@@ -292,6 +368,32 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    //input - function
+    //output - either stored value or value with function
+    //constraints - we can only call funcion once with certain arguments
+    //edge cases - none
+    /*
+    initialize empty collection of previous arguments with their results
+    return function {
+      check if arguments have already been passed in
+      if yes
+        return value at same key arguments
+      else
+      store arguments: result
+      return result
+    }*/
+    //debugger;
+    var storedResults = {};
+
+    return function() {
+      var currentArguments = JSON.stringify(arguments);
+      if (storedResults[currentArguments] !== undefined) {
+        return storedResults[currentArguments];
+      } else {
+        var answer = storedResults[currentArguments] = func.apply(this, arguments);
+        return answer;
+      }
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
